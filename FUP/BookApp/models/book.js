@@ -5,11 +5,13 @@ const { Schema, model } = mongoose
 const bookSchema = new Schema({
         name: {
             type : String,
-            required: true
+            required: true,
+            unique : true
         },
-        author_id:{
-            type : Number,
-            required: true
+        author : {
+            type : Schema.ObjectId,
+            ref : 'Author',
+            required : true
         },
         price:{
             type : Number
