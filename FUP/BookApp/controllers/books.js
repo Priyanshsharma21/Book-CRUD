@@ -1,5 +1,6 @@
 import Book from '../models/book.js'
 import Author from '../models/author.js'
+import Publisher from '../models/publisher.js'
 
 
 export const getAllBooks = async (req,res)=>{
@@ -98,8 +99,9 @@ export const createBook = async (req,res)=>{
     try {
         const book = await Book.create(req.body);
         const populatedBook = await book.populate('author')
+        const populatePublisher = await book.populate('publisher')
 
-        res.status(200).json({success : true, book : populatedBook });
+        res.status(200).json({success : true, book : populatePublisher });
 
     } catch (error) {
         console.log(error)
@@ -131,3 +133,63 @@ export const deleteBook = async (req,res)=>{
             res.status(500).json({success : false, error : error})
     }
 }
+
+
+export const updateBookWithPublisher = async (req,res)=>{
+    try {
+        
+        const publisherKiIds = await Publisher.find({name : {$in : ['Penguin', 'HarperCollins']}}).distinct('_id');
+        if(!publisherKiIds){
+            return res.status(404).json({message : "No Publisher Found"})
+        }
+        
+        const bookWithPublisher = await Book.find({publisher : {$in : publisherKiIds}})
+        await Promise.all(
+            bookWithPublisher.map(async(book)=>{
+                book.isHardCover = true
+                await book.save()
+            })
+        )
+
+        res.status(200).json({success : true, Message : "Books Updated Successfully"})
+
+    } catch (error) {
+            res.status(500).json({success : false, error : error})
+    }
+}
+
+
+export const ratingPriceUpdate = async (req,res)=>{
+    try {
+        
+        const authorWithHighRating = await Author.find({rating : {$gt : 3.5}}).distinct('_id')
+        const bookToUpdate = await Book.find({author : {$in : authorWithHighRating}})
+
+        await Promise.all(
+            bookToUpdate.map(async(book)=>{
+                book.price += 10
+                await book.save()
+            })
+        )
+        
+        res.status(200).json({success : true, Message : "Updated Price Successfully"})
+
+    } catch (error) {
+            res.status(500).json({success : false, error : error})
+    }
+}
+
+
+export const getCompleteBooks = async (req,res)=>{
+    try {
+        
+        const books = await Book.find().populate('author').populate('publisher');
+        res.status(200).json({success : true, books : books})
+
+    } catch (error) {
+            res.status(500).json({success : false, error : error})
+    }
+}
+
+
+

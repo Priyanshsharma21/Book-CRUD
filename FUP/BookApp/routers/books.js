@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllBooks, createBook, updateBook, deleteBook, getBooksByChetanBhagat,updateBookPrice,getBookWithPrice } from '../controllers/books.js'
+import { getAllBooks, createBook, updateBook, deleteBook, getBooksByChetanBhagat,updateBookPrice,getBookWithPrice,updateBookWithPublisher,ratingPriceUpdate, getCompleteBooks } from '../controllers/books.js'
 
 const router = express.Router()
 
@@ -10,7 +10,14 @@ router.get('/author/chetan', getBooksByChetanBhagat)
 router.get('/bookwithprice', getBookWithPrice)
 
 
+router.get('/get-complete-books', getCompleteBooks)
+
+
 router.put('/author', updateBookPrice)
+
+router.put('/books', updateBookWithPublisher)
+
+router.put('/books/update-price', ratingPriceUpdate)
 
 
 

@@ -13,13 +13,22 @@ const bookSchema = new Schema({
             ref : 'Author',
             required : true
         },
+        publisher : {
+            type : Schema.ObjectId,
+            ref : 'Publisher',
+            required : true
+        },
         price:{
             type : Number
         },
         ratings:{
             type : Number
         },
-})
+        isHardCover : {
+            type : Boolean,
+            default : false
+        }
+},{timestamps : true})
 
 const Book = model('Book', bookSchema)
 
